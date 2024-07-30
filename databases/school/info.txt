@@ -1,0 +1,5 @@
+student
+teacher
+course
+mark
+salary
