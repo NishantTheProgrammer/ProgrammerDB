@@ -1,22 +1,51 @@
 package src;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
-public class Table {
+public class Table implements Serializable {
     protected String _tableName;
-    Column[] columns;
+    ArrayList<Column> columns = new ArrayList<>();
+    // private static final long serialVersionUID = 2135094326326691332L;
 
-    Table(String tableName) {
+    public Table(String tableName) {
         this._tableName = tableName;
+        this.columns.add(new Column("name", "varchar", null, "Name of Student"));
+        this.columns.add(new Column("age", "int", null, "Age in years"));
     }
 
-    static void createTable() {
-
+    public static String getMetadataFilePath(String dbName, String tableName) {
+        return "databases/" + dbName + "/tables/metadata/" + tableName + ".txt";
     }
 
-    public void create() {
+    static void createTable(String dbName, String tableName) {
+        try {
+            Table table = new Table(tableName);
+            String filePath  = getMetadataFilePath(dbName, tableName);
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
+            oos.writeObject(table);
+            oos.close();
+            System.out.println("Table created");
+        } catch(Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    static Table getTable(String dbName, String tableName) {
+        try {
+            String filePath  = getMetadataFilePath(dbName, tableName);
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath));
+            Table table = (Table)ois.readObject();
+            ois.close();
+            return table;
+        } catch(Exception e) {
+            System.out.println("ER" + e.getMessage());
+            return null;
+        }
+    }
+
+    public void insert() {
 
     }
 
