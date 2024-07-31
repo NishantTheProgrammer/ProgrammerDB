@@ -1,8 +1,6 @@
 package src;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -42,6 +40,7 @@ public class QueryResolver {
         }
         switch (tokens[0].toUpperCase()) {
             case "SHOW": return this.show(query, tokens);
+            case "DESC": return this.describe(query, tokens);
             case "SELECT": return this.select(query, tokens);
             case "INSERT": return this.insert(query, tokens);
             case "DELETE": return this.delete(query, tokens);
@@ -63,6 +62,19 @@ public class QueryResolver {
         return 1;
     }
 
+
+    public int describe(String query, String[] tokens) {
+        Table table = Table.getTable(databaseName, tokens[1]);
+
+        System.out.println("Table Name: " + table._tableName);
+        table.columns.forEach(column -> {
+            System.out.println(column.name + "(" + column.type + ")");
+        });
+        return 1;
+
+    }
+
+
     public int use(String query, String[] tokens) {
         String databaseName = tokens[1];
         if(FileDb.getDatabases().contains(databaseName)) {
@@ -73,9 +85,12 @@ public class QueryResolver {
         return 1;
     }
     public int select(String query, String[] tokens) {
-        Table student = new Table("student");
+        
+        // Table student = new Table("student");
 
-        Object data = student.find();
+
+
+        // Object data = student.find();
         // System.out.println(data);
         // System.out.println("This command will fetch some data");
         return 1;
@@ -101,8 +116,9 @@ public class QueryResolver {
         if(tokens[1].equalsIgnoreCase("DATABASE")) {
             FileDb.createDatabase(tokens[2]);
         }
-        else if(tokens[1].equalsIgnoreCase("TABLES")) {
+        else if(tokens[1].equalsIgnoreCase("TABLE")) {
             if(databaseName == null) throw new NoDatabaseSelectedException();
+            Table.createTable(this.databaseName, tokens[2]);
             System.err.println("TODO");
         }
         return 1;
@@ -115,7 +131,7 @@ public class QueryResolver {
         Scanner sc = new Scanner(System.in);
         String command; 
         while(true) {
-            System.out.print(ConsoleColors.GREEN_BOLD + "ProgrammerDB(" + (this.databaseName != null ? this.databaseName : "") +")>" + ConsoleColors.RESET);
+            System.out.print(ConsoleColors.GREEN_BOLD + "ProgrammerDB(" + (this.databaseName != null ? this.databaseName : "") +")> " + ConsoleColors.RESET);
             command = sc.nextLine();
             if(command.equalsIgnoreCase("exit")) {
                 System.out.println("BYE");
