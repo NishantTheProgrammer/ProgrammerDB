@@ -6,6 +6,10 @@ import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import src.Exceptions.DbException;
+import src.Exceptions.InvalidCommndException;
+import src.Exceptions.NoDatabaseSelectedException;
+
 public class QueryResolver {
     String databaseName;
 
@@ -16,7 +20,7 @@ public class QueryResolver {
         this.databaseName = databaseName;
     }
 
-    public int excecute(String query) {
+    public int excecute(String query) throws DbException {
 
         String[] tokens = query.split("\\s+");
 
@@ -26,33 +30,31 @@ public class QueryResolver {
         }
 
         if(this.databaseName == null) {
-            if(tokens[0].equalsIgnoreCase("SHOW") && tokens[1].equalsIgnoreCase("DATABASES")) {
+            if(tokens[0].equalsIgnoreCase("SHOW")) {
                 this.show(query, tokens);
             } else {
-                System.err.println(ConsoleColors.RED + "DATABASE NOT SELECTED ❌ " + ConsoleColors.RESET);
+                throw new NoDatabaseSelectedException();
             }
             return 1;
         }
         switch (tokens[0].toUpperCase()) {
-            case "SELECT": return this.select(query, tokens);
             case "SHOW": return this.show(query, tokens);
+            case "SELECT": return this.select(query, tokens);
             case "INSERT": return this.insert(query, tokens);
             case "DELETE": return this.delete(query, tokens);
             case "UPDATE": return this.update(query, tokens);
             case "CREATE": return this.create(query, tokens);
         
-            default:
-                System.out.println(ConsoleColors.RED  + "INVALID COMMAND" + ConsoleColors.RESET);
-                break;
+            default: throw new InvalidCommndException();
         }
-        return 1;
     }
 
-    public int show(String query, String[] tokens) {
+    public int show(String query, String[] tokens) throws DbException {
         if(tokens[1].equalsIgnoreCase("DATABASES")) {
             FileDb.printDatabases();
         }
         else if(tokens[1].equalsIgnoreCase("TABLES")) {
+            if(databaseName == null) throw new NoDatabaseSelectedException();
             FileDb.printTables(this.databaseName);
         }
         return 1;
@@ -111,7 +113,12 @@ public class QueryResolver {
                 break;
             }
 
-            this.excecute(command);
+            try {
+                this.excecute(command);
+            } catch(DbException e) {
+                System.out.println(e.getColoredMessage());
+            }
+
         }
         sc.close();
     }
