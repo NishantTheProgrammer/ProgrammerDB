@@ -1,5 +1,8 @@
 package src;
-public class Column {
+
+import java.io.Serializable;
+
+public class Column implements Serializable {
     String name;
     String type;
     Boolean nullable = true;
