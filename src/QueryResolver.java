@@ -32,6 +32,9 @@ public class QueryResolver {
         if(this.databaseName == null) {
             if(tokens[0].equalsIgnoreCase("SHOW")) {
                 this.show(query, tokens);
+            }
+            else if(tokens[0].equalsIgnoreCase("CREATE")) {
+                this.create(query, tokens);
             } else {
                 throw new NoDatabaseSelectedException();
             }
@@ -93,9 +96,15 @@ public class QueryResolver {
         return 1;
     }
 
-    public int create(String query, String[] tokens) {
+    public int create(String query, String[] tokens) throws DbException {
         // Table.createTable();
-        System.out.println("This command will fetch some data");
+        if(tokens[1].equalsIgnoreCase("DATABASE")) {
+            FileDb.createDatabase(tokens[2]);
+        }
+        else if(tokens[1].equalsIgnoreCase("TABLES")) {
+            if(databaseName == null) throw new NoDatabaseSelectedException();
+            System.err.println("TODO");
+        }
         return 1;
 
     }
