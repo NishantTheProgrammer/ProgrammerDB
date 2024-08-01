@@ -1,3 +1,0 @@
-ngo_profile
-event
-user

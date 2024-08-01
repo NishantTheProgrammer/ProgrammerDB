@@ -119,7 +119,6 @@ public class QueryResolver {
         else if(tokens[1].equalsIgnoreCase("TABLE")) {
             if(databaseName == null) throw new NoDatabaseSelectedException();
             Table.createTable(this.databaseName, tokens[2]);
-            System.err.println("TODO");
         }
         return 1;
 

@@ -1,14 +1,12 @@
 package src;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import src.Exceptions.DbAlreadyExists;
 import src.Exceptions.DbException;
+import src.Exceptions.TableAlreadyExists;
 
 public class FileDb {
 
@@ -49,6 +47,20 @@ public class FileDb {
             e.printStackTrace();
         }
         System.out.println("Added database " + dbName);
+    }
+
+    public static void createTable(String dbName, String tableName) throws DbException {
+        if(getTables(dbName).contains(tableName)) throw new TableAlreadyExists();
+        try {
+            FileWriter fw = new FileWriter("databases/" + dbName + "/info.txt", true);
+            fw.write("\n" + tableName);
+            File tableInfoFile = new File("databases/" + dbName + "/tables/data/" + tableName +  ".csv");
+            tableInfoFile.createNewFile();
+            fw.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Added table " + tableName);
     }
 
     public static void printDatabases() {

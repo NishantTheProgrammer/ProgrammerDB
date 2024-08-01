@@ -20,12 +20,12 @@ public class Table implements Serializable {
 
     static void createTable(String dbName, String tableName) {
         try {
+            FileDb.createTable(dbName, tableName);
             Table table = new Table(tableName);
             String filePath  = getMetadataFilePath(dbName, tableName);
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
             oos.writeObject(table);
             oos.close();
-            System.out.println("Table created");
         } catch(Exception e) {
             e.printStackTrace();
 
