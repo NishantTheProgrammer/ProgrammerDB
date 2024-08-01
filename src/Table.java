@@ -3,6 +3,8 @@ package src;
 import java.io.*;
 import java.util.ArrayList;
 
+import src.Exceptions.DbException;
+
 public class Table implements Serializable {
     protected String _tableName;
     ArrayList<Column> columns = new ArrayList<>();
@@ -18,7 +20,7 @@ public class Table implements Serializable {
         return "databases/" + dbName + "/tables/metadata/" + tableName + ".txt";
     }
 
-    static void createTable(String dbName, String tableName) {
+    static void createTable(String dbName, String tableName) throws DbException {
         try {
             FileDb.createTable(dbName, tableName);
             Table table = new Table(tableName);
@@ -26,7 +28,7 @@ public class Table implements Serializable {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
             oos.writeObject(table);
             oos.close();
-        } catch(Exception e) {
+        } catch(IOException e) {
             e.printStackTrace();
 
         }
